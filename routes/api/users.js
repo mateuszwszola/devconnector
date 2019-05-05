@@ -20,8 +20,7 @@ router.post('/', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, password } = req.body;
-  const email = req.body.email.toLowerCase();
+  const { name, password, email } = req.body;
 
   try {
     let user = await User.findOne({ email });
