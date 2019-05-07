@@ -281,7 +281,7 @@ router.put(
     try {
       const profile = await Profile.findOne({ user: req.user.id });
       const updateIndex = profile.experience.findIndex(
-        item => item._id.toString() === req.params.exp_id
+        item => item.id === req.params.exp_id
       );
 
       if (updateIndex < 0) {
@@ -313,7 +313,7 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 
     // Get remove index
     const removeIndex = profile.experience.findIndex(
-      item => item._id.toString() === req.params.exp_id
+      item => item.id === req.params.exp_id
     );
 
     if (removeIndex < 0) {
@@ -322,10 +322,172 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 
     profile.experience.splice(removeIndex, 1);
     await profile.save();
+
     res.json(profile);
   } catch (err) {
     console.error(err.message);
-    res.send('Server Error');
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Experience not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT api/profile/education
+// @desc    Add profile education
+// @access  Private
+router.put(
+  '/education',
+  [
+    auth,
+    [
+      check('school', 'School is required')
+        .not()
+        .isEmpty(),
+      check('degree', 'Degree is required')
+        .not()
+        .isEmpty(),
+      check('fieldofstudy', 'Field of study is required')
+        .not()
+        .isEmpty(),
+      check('from', 'From date is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const fields = [
+      'school',
+      'degree',
+      'fieldofstudy',
+      'from',
+      'to',
+      'current',
+      'description'
+    ];
+
+    const newEdu = {};
+    fields.forEach(field => {
+      if (req.body.hasOwnProperty(field)) {
+        newEdu[field] = req.body[field];
+      }
+    });
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      profile.education.unshift(newEdu);
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route   PUT api/profile/education/:edu_id
+// @desc    Update profile education
+// @access  Private
+router.put(
+  '/education/:edu_id',
+  [
+    auth,
+    [
+      check('school', 'School is required')
+        .not()
+        .isEmpty(),
+      check('degree', 'Degree is required')
+        .not()
+        .isEmpty(),
+      check('fieldofstudy', 'Field of study is required')
+        .not()
+        .isEmpty(),
+      check('from', 'From date is required')
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const fields = [
+      'school',
+      'degree',
+      'fieldofstudy',
+      'from',
+      'to',
+      'current',
+      'description'
+    ];
+
+    const newEdu = {};
+    fields.forEach(field => {
+      if (req.body.hasOwnProperty(field)) {
+        newEdu[field] = req.body[field];
+      }
+    });
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      const updateIndex = profile.education.findIndex(
+        item => item.id === req.params.edu_id
+      );
+
+      if (updateIndex < 0) {
+        return res.status(404).json({ msg: 'Education not found' });
+      }
+
+      newEdu._id = profile.education[updateIndex]._id;
+      profile.education.splice(updateIndex, 1, newEdu);
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      if (err.kind === 'ObjectId') {
+        return res.status(404).json({ msg: 'Education not found' });
+      }
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete education from profile
+// @access  Private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get remove index
+    const removeIndex = profile.education.findIndex(
+      item => item.id === req.params.edu_id
+    );
+
+    if (removeIndex < 0) {
+      return res.status(404).json({ msg: 'Education not found' });
+    }
+
+    profile.education.splice(removeIndex, 1);
+    await profile.save();
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Education not found' });
+    }
+    res.status(500).send('Server Error');
   }
 });
 
