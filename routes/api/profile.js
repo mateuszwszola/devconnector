@@ -506,7 +506,6 @@ router.get('/github/:username', (req, res) => {
       headers: { 'user-agent': 'node.js' }
     };
 
-    console.log({ options });
     request(options, (error, response, body) => {
       if (error) console.error(error);
 
