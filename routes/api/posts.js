@@ -3,9 +3,14 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 const auth = require('../../middleware/auth');
 
+// Load models
 const Post = require('../../models/Post');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+// Load routers
+const commentRouter = require('./comments');
+
+router.use('/comment', commentRouter);
 
 // @route   POST api/posts
 // @desc    Create post
@@ -160,6 +165,40 @@ router.put('/unlike/:id', auth, async (req, res) => {
       ...post.likes.slice(0, likeIndex),
       ...post.likes.slice(likeIndex + 1)
     ];
+    await post.save();
+    res.json(post.likes);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   PUT api/posts/:post_id/like
+// @desc    Toggle post like
+// @access  Private
+router.put('/:post_id/like', auth, async (req, res) => {
+  const { post_id } = req.params;
+  try {
+    const post = await Post.findById(post_id);
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    // Check if user has already been liked
+    const likeIndex = post.likes.findIndex(
+      like => like.user.toString() === req.user.id
+    );
+    if (likeIndex < 0) {
+      // User hasn't yet liked this post, like it
+      post.likes = [{ user: req.user.id }, ...post.likes];
+    } else {
+      post.likes = [
+        ...post.likes.slice(0, likeIndex),
+        ...post.likes.slice(likeIndex + 1)
+      ];
+    }
     await post.save();
     res.json(post.likes);
   } catch (err) {
