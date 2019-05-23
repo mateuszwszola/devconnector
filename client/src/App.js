@@ -5,7 +5,9 @@ import { Navbar, Landing, Alert } from './components/layout';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
+import CreateProfile from './components/profile-forms/CreateProfile';
 import PrivateRoute from './components/routing/PrivateRoute';
+
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -35,6 +37,11 @@ const App = () => {
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute
+                exact
+                path="/create-profile"
+                component={CreateProfile}
+              />
               <Route render={() => <div>Four oh four</div>} />
             </Switch>
           </section>
