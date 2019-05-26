@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { setAlert } from '../../actions/alert';
 import { register } from '../../actions/auth';
 
-const Register = ({ setAlert, register, isAuthenticated }) => {
+const Register = ({ setAlert, register, isAuthenticated, history }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,13 +26,13 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
       console.log('Passwords do not match');
       setAlert('Passwords do not match', 'danger', 5000);
     } else {
-      register({ name, email, password });
+      register({ name, email, password }, history);
     }
   };
 
-  if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
-  }
+  // if (isAuthenticated) {
+  //   return <Redirect to="/dashboard" />;
+  // }
 
   return (
     <Fragment>
