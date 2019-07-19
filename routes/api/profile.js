@@ -14,7 +14,7 @@ const Post = require('../../models/Post');
 router.get('/me', auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id }).populate(
-      'users',
+      'user',
       ['name', 'avatar']
     );
     if (!profile) {
@@ -132,7 +132,7 @@ router.post(
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const profiles = await Profile.find().populate('users', ['name', 'avatar']);
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
     res.json(profiles);
   } catch (err) {
     console.error(err.message);
@@ -146,7 +146,7 @@ router.get('/', async (req, res) => {
 router.get('/user/:user_id', async (req, res) => {
   const { user_id } = req.params;
   try {
-    const profile = await Profile.findOne({ user: user_id }).populate('users', [
+    const profile = await Profile.findOne({ user: user_id }).populate('user', [
       'name',
       'avatar'
     ]);
