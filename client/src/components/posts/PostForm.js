@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { addPost } from '../../actions/post';
 
-const PostForm = () => {
+const PostForm = ({ addPost }) => {
   const [text, setText] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    // TODO: Create a post
+    addPost({ text }, () => {
+      setText('');
+    });
   };
 
   const handleChange = e => {
@@ -36,6 +40,11 @@ const PostForm = () => {
   );
 };
 
-PostForm.propTypes = {};
+PostForm.propTypes = {
+  addPost: PropTypes.func.isRequired
+};
 
-export default PostForm;
+export default connect(
+  null,
+  { addPost }
+)(PostForm);

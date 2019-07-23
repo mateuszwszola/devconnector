@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { addLike, removeLike, deletePost } from '../../actions/post';
 
-const Post = ({
+const PostItem = ({
   post: { _id, user, text, name, avatar, likes, comments, date },
   auth,
   addLike,
@@ -40,7 +40,7 @@ const Post = ({
         >
           <i className="fas fa-thumbs-down" />
         </button>
-        <Link to={`/post/${_id}`} className="btn btn-primary">
+        <Link to={`/posts/${_id}`} className="btn btn-primary">
           Discussion{' '}
           {comments.length > 0 && (
             <span className="comment-count">{comments.length}</span>
@@ -62,7 +62,7 @@ const Post = ({
   );
 };
 
-Post.propTypes = {
+PostItem.propTypes = {
   post: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   addLike: PropTypes.func.isRequired,
@@ -77,4 +77,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { addLike, removeLike, deletePost }
-)(Post);
+)(PostItem);

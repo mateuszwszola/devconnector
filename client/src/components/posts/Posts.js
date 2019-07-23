@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getPosts } from '../../actions/post';
 import Spinner from '../layout/Spinner';
 import PostForm from './PostForm';
-import Post from './Post';
+import PostItem from './PostItem';
 
 const Posts = ({ post: { loading, posts }, getPosts }) => {
   useEffect(() => {
@@ -23,7 +23,7 @@ const Posts = ({ post: { loading, posts }, getPosts }) => {
         <>
           <div className="posts">
             {posts.map(post => (
-              <Post key={post._id} post={post} />
+              <PostItem key={post._id} post={post} />
             ))}
           </div>
         </>
