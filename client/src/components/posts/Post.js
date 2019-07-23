@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { addLike, removeLike } from '../../actions/post';
+import { addLike, removeLike, deletePost } from '../../actions/post';
 
 const Post = ({
   post: { _id, user, text, name, avatar, likes, comments, date },
   auth,
   addLike,
-  removeLike
+  removeLike,
+  deletePost
 }) => {
   return (
     <div className="post bg-white p-1 m-1">
@@ -46,7 +47,11 @@ const Post = ({
           )}
         </Link>
         {auth.isAuthenticated && auth.user._id === user ? (
-          <button type="button" className="btn btn-danger">
+          <button
+            onClick={() => deletePost(_id)}
+            type="button"
+            className="btn btn-danger"
+          >
             <i className="fas fa-times" />
           </button>
         ) : (
@@ -61,7 +66,8 @@ Post.propTypes = {
   post: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   addLike: PropTypes.func.isRequired,
-  removeLike: PropTypes.func.isRequired
+  removeLike: PropTypes.func.isRequired,
+  deletePost: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -70,5 +76,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addLike, removeLike }
+  { addLike, removeLike, deletePost }
 )(Post);

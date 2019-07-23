@@ -1,4 +1,9 @@
-import { GET_POSTS, POST_ERROR, UPDATE_LIKE } from '../actions/types';
+import {
+  GET_POSTS,
+  POST_ERROR,
+  UPDATE_LIKE,
+  DELETE_POST
+} from '../actions/types';
 
 const initialState = {
   posts: [],
@@ -25,12 +30,17 @@ export default function(state = initialState, action) {
       };
     case UPDATE_LIKE:
       const { id, likes } = payload;
-
       return {
         ...state,
         posts: state.posts.map(post =>
           post._id === id ? { ...post, likes } : post
         ),
+        loading: false
+      };
+    case DELETE_POST:
+      return {
+        ...state,
+        posts: state.posts.filter(post => post._id !== payload),
         loading: false
       };
     default:
